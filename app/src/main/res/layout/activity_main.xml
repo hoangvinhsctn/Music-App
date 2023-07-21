@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <ListView
+        android:id="@+id/lvMusic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"/>
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imgPlayer"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/zingmp3" />
+
+        <TextView
+            android:text="Tên bài hát"
+            android:textColor="#000"
+            android:textAlignment="center"
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgPlayer" />
+
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/imgNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvName"
+            android:layout_toRightOf="@id/imgPlayer"
+            android:layout_marginLeft="190dp"
+            android:src="@drawable/icon_next" />
+
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/imgPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvName"
+            android:layout_toRightOf="@id/imgPlayer"
+            android:layout_marginLeft="130dp"
+            android:src="@drawable/icon_play" />
+
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/imgBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvName"
+            android:layout_toRightOf="@id/imgPlayer"
+            android:layout_marginLeft="70dp"
+            android:src="@drawable/icon_back" />
+
+        <SeekBar
+            android:id="@+id/sbarStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgPlay"
+            android:layout_toRightOf="@id/imgPlayer"
+            android:thumbTint="#aaa"
+            />
+
+        <TextView
+            android:id="@+id/tvStart"
+            android:layout_marginLeft="5dp"
+            android:text="0:00"
+            android:layout_toRightOf="@+id/imgPlayer"
+            android:layout_below="@+id/sbarStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tvEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sbarStart"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:text="0:00" />
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
