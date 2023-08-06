@@ -8,10 +8,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,21 +32,30 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private int position;
 
+    private Animation animation;
+    private RelativeLayout relativeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         AnhXa();
+
+        relativeLayout.setVisibility(View.GONE);
+
+        animation = AnimationUtils.loadAnimation(this, R.anim.rotate_cd);
+
         musicAdapter = new MusicAdapter(this, R.layout.image_row, musicArrayList);
         listView.setAdapter(musicAdapter);
 
-        mediaPlayer = MediaPlayer.create(MainActivity.this,musicArrayList.get(position).getFile());
+        KhoitaoMedia();
 
         //Xử lý sự kiện khi click vào 1 dòng của list view
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                relativeLayout.setVisibility(View.VISIBLE);
                 position = i;
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
@@ -61,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i1);
                 if(mediaPlayer.isPlaying() && mediaPlayer != null) {
                     mediaPlayer.pause();
-                    imageplay.setImageResource(R.drawable.icon_play);
+                    imageplay.setImageResource(R.drawable.play_icon);
                 }
                 return false;
             }
@@ -71,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                seekBar.setEnabled(false);
+
             }
 
             @Override
@@ -89,14 +101,14 @@ public class MainActivity extends AppCompatActivity {
         imageplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tviewName.setText(musicArrayList.get(position).getName());
                 if(mediaPlayer.isPlaying())
                 {
                     mediaPlayer.pause();
-                    imageplay.setImageResource(R.drawable.icon_play);
+                    imageplay.setImageResource(R.drawable.play_icon);
                 }else{
                     mediaPlayer.start();
-                    imageplay.setImageResource(R.drawable.icon_pause);
+                    imagePlayer.startAnimation(animation);
+                    imageplay.setImageResource(R.drawable.pause_icon);
                 }
             }
         });
@@ -107,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 StopMediaPlayer();
                 position++;
-                if(position >= musicArrayList.size())
+                if(position > musicArrayList.size() - 1)
                     position = 0;
                 KhoitaoMedia();
                 StartNewMediaPlayer();
@@ -132,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     private void UpdateTime() {
         //Xử lý cập nhật thời gian liên tục trong quá trình phát
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //Lấy thời gian thực tế đang chạy
@@ -140,19 +152,21 @@ public class MainActivity extends AppCompatActivity {
                 tvstart.setText(simpleDateFormat.format(mediaPlayer.getCurrentPosition()));
                 seekBar.setProgress(mediaPlayer.getCurrentPosition());
 
-                //Khi media player phát xong sẽ tự động dừng
+                // Xử lý khi phát hết bài hát
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
-                        mediaPlayer.stop();
+                        position++;
+                        if(position > musicArrayList.size() - 1)
+                            position = 0;
+                        KhoitaoMedia();
+                        StartNewMediaPlayer();
                     }
                 });
-                //Lặp lại thời gian cập nhật trong 1 giây
+                //Lặp lại sự kiện trong 1s
                 handler.postDelayed(this, 1000);
             }
-        };
-        //Bắt đầu cập nhật thời gian hiện tại
-        handler.postDelayed(runnable,1000);
+        },100);
     }
 
     //Khởi tạo tệp âm thành từ Media Player
@@ -179,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         imagePlayer = (ImageView) findViewById(R.id.imgPlayer);
         tvstart = (TextView) findViewById(R.id.tvStart);
         tvend = (TextView) findViewById(R.id.tvEnd);
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeShow);
 
         musicArrayList = new ArrayList<>();
         musicArrayList.add(new Music("Anh thanh niên","Huy R",R.drawable.anhthanhnien,R.raw.anhthanhnien,"https://www.youtube.com/watch?v=HPL74s4VPdk"));
@@ -207,14 +222,14 @@ public class MainActivity extends AppCompatActivity {
     private void StopMediaPlayer(){
         if(mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
-            imageplay.setImageResource(R.drawable.icon_play);
+            imageplay.setImageResource(R.drawable.play_icon);
         }
     }
     //Xử lý khi bắt đầu chạy một media player
     private void StartNewMediaPlayer(){
         mediaPlayer.start();
-        imageplay.setImageResource(R.drawable.icon_pause);
-        imagePlayer.setImageResource(musicArrayList.get(position).getImage());
+        imagePlayer.startAnimation(animation);
+        imageplay.setImageResource(R.drawable.pause_icon);
         timeTotal();
         UpdateTime();
     }
